@@ -1,7 +1,5 @@
 package databases.introToJdbc.business;
 
-import java.io.Serializable;
-
 /*
     CREATE TABLE `employees` (
       `employeeNumber` int(11) NOT NULL,
@@ -16,7 +14,7 @@ import java.io.Serializable;
     ) 
 */
 
-public class Employee implements Serializable {
+public class Employee{
     private int employeeNumber;
     private String lastName;
     private String firstName;

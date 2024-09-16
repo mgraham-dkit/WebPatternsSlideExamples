@@ -1,11 +1,21 @@
-package databases.introToJdbc.business;
+package databases.introducingLombok.business;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
 /**
  *
  * @author michelle
  */
+// Add getter methods
+@Getter
+// Add the ability to build object with any components in any order
+@Builder
+// Add an all-args constructor
+@AllArgsConstructor
 public class Customer implements Comparable<Customer> {
-
     /*
      * CREATE TABLE customers ( customerNumber int(11) NOT NULL, customerName
      * varchar(50) NOT NULL, contactLastName varchar(50) NOT NULL,
@@ -18,109 +28,28 @@ public class Customer implements Comparable<Customer> {
      * REFERENCES employees(employeeNumber) );
      */
 
+    // Annotate all fields that cannot be null with NonNull
+    // Don't include any auto-generating primary key fields as these may not be known when the object is created
     private int customerNumber;
+    @NonNull
     private String customerName;
+    @NonNull
     private String contactLastName;
+    @NonNull
     private String contactFirstName;
+    @NonNull
     private String phone;
+    @NonNull
     private String addressLine1;
     private String addressLine2;
+    @NonNull
     private String city;
     private String state;
     private String postalCode;
+    @NonNull
     private String country;
     private int salesRepEmployeeNumber;
     private double creditLimit;
-
-    public Customer() {
-        this.salesRepEmployeeNumber = 0;
-    }
-
-    // Constructor that does not take in a sales rep - this is for where there
-    // is no sales rep, i.e. it's null
-    public Customer(int customerNumber, String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, double creditLimit) {
-        this.customerNumber = customerNumber;
-        this.customerName = customerName;
-        this.contactLastName = contactLastName;
-        this.contactFirstName = contactFirstName;
-        this.phone = phone;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.city = city;
-        this.state = state;
-        this.postalCode = postalCode;
-        this.country = country;
-        this.salesRepEmployeeNumber = 0;
-        this.creditLimit = creditLimit;
-    }
-
-    public Customer(int customerNumber, String customerName, String contactLastName, String contactFirstName, String phone, String addressLine1, String addressLine2, String city, String state, String postalCode, String country, int salesRepEmployeeNumber, double creditLimit) {
-        this.customerNumber = customerNumber;
-        this.customerName = customerName;
-        this.contactLastName = contactLastName;
-        this.contactFirstName = contactFirstName;
-        this.phone = phone;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.city = city;
-        this.state = state;
-        this.postalCode = postalCode;
-        this.country = country;
-        this.salesRepEmployeeNumber = salesRepEmployeeNumber;
-        this.creditLimit = creditLimit;
-    }
-
-    public int getCustomerNumber() {
-        return customerNumber;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public String getContactLastName() {
-        return contactLastName;
-    }
-
-    public String getContactFirstName() {
-        return contactFirstName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getAddressLine1() {
-        return addressLine1;
-    }
-
-    public String getAddressLine2() {
-        return addressLine2;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public int getSalesRepEmployeeNumber() {
-        return salesRepEmployeeNumber;
-    }
-
-    public double getCreditLimit() {
-        return creditLimit;
-    }
 
     @Override
     public boolean equals(Object o) {
