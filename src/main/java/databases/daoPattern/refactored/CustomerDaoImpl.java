@@ -10,9 +10,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
-    public ImprovedCustomerDaoImpl(String propertiesFilename){
+public class CustomerDaoImpl extends MySQLDao implements CustomerDao {
+    public CustomerDaoImpl(String propertiesFilename) {
         super(propertiesFilename);
+    }
+
+    public static void main(String[] args) {
+        CustomerDao customerDao = new CustomerDaoImpl("database.properties");
+        List<Customer> customers = customerDao.getAllCustomers();
+        System.out.println(customers);
+        System.out.println("------------------------------");
+        System.out.println("Customer with id 119: " + customerDao.getById(119));
     }
 
     @Override
@@ -33,7 +41,9 @@ public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
             try (ResultSet rs = ps.executeQuery()) {
                 // Extract the information from the result set
                 // Use extraction method to avoid code repetition!
-                customer = extractCustomerFromRow(rs);
+                if(rs.next()) {
+                    customer = mapRow(rs);
+                }
             } catch (SQLException e) {
                 System.out.println("SQL Exception occurred when executing SQL or processing results.");
                 System.out.println("Error: " + e.getMessage());
@@ -43,7 +53,7 @@ public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
             System.out.println("SQL Exception occurred when attempting to prepare SQL for execution");
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
-        }finally {
+        } finally {
             // Close the connection using the superclass method
             super.freeConnection(conn);
         }
@@ -62,17 +72,9 @@ public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
             // Execute the query
             try (ResultSet rs = ps.executeQuery()) {
                 // Repeatedly try to get a customer from the resultset
-                Customer c = null;
-                boolean empty = false;
-                while (!empty) {
-                    c = extractCustomerFromRow(rs);
-                    // If it's null, the row was empty/didn't exist so the loop should end
-                    if (c == null) {
-                        empty = true;
-                    } else {
-                        // If a real customer was returned, add it to the list of results
-                        customers.add(c);
-                    }
+                while (rs.next()) {
+                    Customer c = mapRow(rs);
+                    customers.add(c);
                 }
             } catch (SQLException e) {
                 System.out.println("SQL Exception occurred when executing SQL or processing results.");
@@ -83,7 +85,7 @@ public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
             System.out.println("SQL Exception occurred when attempting to prepare SQL for execution");
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
-        }finally {
+        } finally {
             // Close the connection using the superclass method
             super.freeConnection(conn);
         }
@@ -120,41 +122,24 @@ public class ImprovedCustomerDaoImpl extends MySQLDao implements CustomerDao {
         }
     }
 
-    private Customer extractCustomerFromRow(ResultSet rs) throws SQLException {
-        // Confirm the ResultSet exists before using it
-        if (rs == null) {
-            throw new IllegalArgumentException("ResultSet cannot be null.");
-        }
-
-        // Set up Customer object to hold extracted data
-        Customer c = null;
-
-        // If there is a row remaining in the resultset, extract it to a Customer object
-        if (rs.next()) {
-            // Get the pieces of a customer from the resultset and create a new Customer
-            c = new Customer(
-                    rs.getInt("customerNumber"),
-                    rs.getString("customerName"),
-                    rs.getString("contactLastName"),
-                    rs.getString("contactFirstName"),
-                    rs.getString("phone"),
-                    rs.getString("addressLine1"),
-                    rs.getString("addressLine2"),
-                    rs.getString("city"),
-                    rs.getString("state"),
-                    rs.getString("postalCode"),
-                    rs.getString("country"),
-                    rs.getInt("salesRepEmployeeNumber"),
-                    rs.getDouble("creditLimit")
-            );
-        }
+    private Customer mapRow(ResultSet rs) throws SQLException {
+        // Get the pieces of a customer from the resultset and create a new Customer
+        Customer c = new Customer(
+                rs.getInt("customerNumber"),
+                rs.getString("customerName"),
+                rs.getString("contactLastName"),
+                rs.getString("contactFirstName"),
+                rs.getString("phone"),
+                rs.getString("addressLine1"),
+                rs.getString("addressLine2"),
+                rs.getString("city"),
+                rs.getString("state"),
+                rs.getString("postalCode"),
+                rs.getString("country"),
+                rs.getInt("salesRepEmployeeNumber"),
+                rs.getDouble("creditLimit")
+        );
         // Return the extracted Customer (or null if the resultset was empty)
         return c;
-    }
-
-    public static void main(String[] args) {
-        CustomerDao customerDao = new ImprovedCustomerDaoImpl("database.properties");
-        List<Customer> customers = customerDao.getAllCustomers();
-        System.out.println(customers);
     }
 }
